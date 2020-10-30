@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import model.entities.DepartmentService;
 
 public class MainViewController implements Initializable {
 
@@ -32,7 +33,8 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onMenuItemDepartmentAction() {
-		loadView("/gui/DepartmentList.fxml");
+		// provisório
+		loadView2("/gui/DepartmentList.fxml");
 	}
 
 	@FXML
@@ -61,6 +63,39 @@ public class MainViewController implements Initializable {
 			mainVBox.getChildren().clear();
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
+
+		} catch (IOException e) {
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
+	}
+	
+	// provisório
+	private synchronized void loadView2(String absoluteName) {
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+
+			VBox newVBox = loader.load();
+
+			Scene mainScene = Main.getMainScene();
+
+			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+
+			Node mainMenu = mainVBox.getChildren().get(0);
+
+			mainVBox.getChildren().clear();
+			mainVBox.getChildren().add(mainMenu);
+			mainVBox.getChildren().addAll(newVBox.getChildren());
+			
+			// A partir do objeto "loader" eu posso tanto carregar a View, quanto acesso o Controller 
+			DepartmentListController controller = loader.getController();
+			
+			// Injeção de dependência manual
+			// Agora o objeto "service" não é mais NULL o método updateTableView() funcionará
+			controller.setDepartmentService(new DepartmentService());
+			
+			// Atualizar/mostrar os dados na tela da <TableView>
+			controller.updateTableView();
 
 		} catch (IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
