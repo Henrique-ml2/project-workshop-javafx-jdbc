@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- 
-Padronizar a aplicação para todas as Views utilziarem o <VBox>
-
-Fica mais fácil abrir o conteúdo de uma outra tela em cima da tela principal
--->
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>

@@ -8,21 +8,6 @@
 
 <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
    <content>
-   
-   	<!-- 			
-   		//  MUDAR PARA A VIEW DO ABOUT  //
-   	
-   	Esta etapa é para trocar o <children> do VBox principal por outro (o <children> da View do About) 
-   	Ou seja, trocar o que aparece na tela
-   	
-   	Para fazer isso é preciso:
-   	
-   	1) Referenciar o <VBox> abaixo (principal)
-   	2) Excuir todo(s) o(s_ <children> da <VBox> principal
-   	3) Adicionar a barra de Menu
-   	4) Adicionar todo(s) o(s) <children> do <VBox> da View do About nesse <VBox> principal
-   	-->
-   	
       <VBox prefHeight="317.0" prefWidth="501.0">
          <children>
             <MenuBar>

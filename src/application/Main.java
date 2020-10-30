@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-	// Atributo criado para referenciar a Scene com método em outra classe, nesse caso a MainViewController
-	// Isso foi feito para poder manipular a Scene (o que aparece na View, não é o <ScrollPane>) 
 	private static Scene mainScene;
 
 	@Override
