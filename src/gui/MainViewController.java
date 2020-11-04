@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
@@ -15,7 +16,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import model.entities.DepartmentService;
+import model.services.DepartmentService;
 
 public class MainViewController implements Initializable {
 
@@ -33,13 +34,19 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onMenuItemDepartmentAction() {
-		// provisório
-		loadView2("/gui/DepartmentList.fxml");
+		// Agora a inicialização (ação de mostrar a lista na <TableView>) é feita no método
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
+			controller.setDepartmentService(new DepartmentService());
+			controller.updateTableView();
+		});
 	}
 
 	@FXML
 	public void onMenuItemAboutAction() {
-		loadView("/gui/About.fxml");
+		// Como agora o método loadView() recebe função como parâmetro
+		// E como a View do About nõa tem nada para ser feito
+		// Faz-se uma função que não faz absolutamente nada
+		loadView("/gui/About.fxml", x -> {});
 	}
 
 	@Override
@@ -47,59 +54,57 @@ public class MainViewController implements Initializable {
 
 	}
 
-	private synchronized void loadView(String absoluteName) {
+	// Agora o método é um tipo genérico, do tipo <T> (aceita função como parâmetro)
+	
+	// Isso foi feito para:
+	// 1) ter somente 1 versão do método, e não precisar criar outros loadView() diferentes, pois...
+	// 2) antes foi criado o loadView2() pois era com método que tinha uma AÇÃO (carregar a lista), e o loadView() era um método que NÃO tinha AÇÃO
+	// 3) antes caso fosse preciso carregar outra View que tivesse outra ação diferente, teria que criar por exemplo o loadView3() 
+	
+	// Então agora o método loadView() pode carregar as View's diferentes que tenham ou não uma ação - parametrizando com o Consumer<T>
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-
 			VBox newVBox = loader.load();
 
 			Scene mainScene = Main.getMainScene();
-
 			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
 
 			Node mainMenu = mainVBox.getChildren().get(0);
-
 			mainVBox.getChildren().clear();
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
-
+			
+			// Executar a função que for passada como argumento 
+			// - getController(): agora retorna um Controller do tipo <T>, ou seja, retorna o tipo do Controller passado na expressão lambda
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+			
 		} catch (IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
 	
-	// provisório
+	/*
 	private synchronized void loadView2(String absoluteName) {
 		try {
-
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-
 			VBox newVBox = loader.load();
-
 			Scene mainScene = Main.getMainScene();
-
 			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-
 			Node mainMenu = mainVBox.getChildren().get(0);
-
 			mainVBox.getChildren().clear();
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
 			
-			// A partir do objeto "loader" eu posso tanto carregar a View, quanto acesso o Controller 
+			// Passar essa inicialização como parâmetro do método loadView()
 			DepartmentListController controller = loader.getController();
-			
-			// Injeção de dependência manual
-			// Agora o objeto "service" não é mais NULL o método updateTableView() funcionará
 			controller.setDepartmentService(new DepartmentService());
-			
-			// Atualizar/mostrar os dados na tela da <TableView>
 			controller.updateTableView();
-
 		} catch (IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
-
+	*/
 }
