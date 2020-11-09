@@ -1,9 +1,12 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DbException;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -21,14 +24,11 @@ public class DepartmentFormController implements Initializable{
 
 	private Department entity;
 	
-	// Depedência
 	private DepartmentService service;
 	
-	// Injeção de dependência por meio da Inversão de controle
-	public void setDepartmentService(DepartmentService service) {
-		this.service = service;
-	}
-		
+	// Lista de objetos que implementam DataChangeListener que receberão o evento
+	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+	
 	@FXML
 	private TextField txtId;
 	@FXML
@@ -44,30 +44,39 @@ public class DepartmentFormController implements Initializable{
 		this.entity = entity;
 	}
 	
-	// Agora o <Button> "btSave" irá ter a funcionalidade de salvar OU atualizar um Department
+	public void setDepartmentService(DepartmentService service) {
+		this.service = service;
+	}
+	
+	// Inscrever/adicionar os objetos (classes)  à lista que receberão o evento, desde que implementem DataChangeListener
+	public void subscribeDataChangeListener(DataChangeListener listener) {
+		dataChangeListeners.add(listener);
+	}
+	
+	// Método responsável por executar o método onDataChanged() em cada objeto (classe) adicionado/inscrito da lista "dataChangeListeners" 
+	// O método onDataChanged() é implementado nos objetos (classes) diferentes
+	// Ou seja, o método onDataChanged() é diferente para cada objeto (classe) adicionado/inscrito da lista "dataChangeListeners"
+	private void notifyDataChangeListeners() {
+		for (DataChangeListener listener : dataChangeListeners) {
+			listener.onDataChanged();
+		}
+	}
+	
 	@FXML 
 	public void OnBtSaveAction(ActionEvent event) {
-		
-		// Programação defensiva caso o programador se esqueça de fazer a injeção do Department entity e do DepartmentService service
-		// Faz-se essa Programação defensiva pois as Injeções de Dependência estão sendo feitas manualmente e não com um Framework e etc
 		if (entity == null) {
 			throw new IllegalStateException("Entity was null");
 		}
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		// try-catch: pois se está mexendo com banco de dados (o método saveOrUpdate())
 		try {
-			// - getFormData(): vai retornar os dados das <TextField> Id e Name e instanciar um Department 
 			entity = getFormData();
-			
-			// Agora o objeto "entity" é o objeto dos <TextField> que vai ter OU NÂO um Id
-			// - saveOrUpdate(): o método irá checar se o objeto "entity" tem Id == 0 (salvar) OU Id != 0 (atualizar)
 			service.saveOrUpdate(entity);
 			
-			// Fechar a janela depois que o Department foi salvo OU atualizado
-			// - Utils.currentStage(event): Referência para a View atual, ou seja, a View do DepartmentForm
-			// - close(): fecha a View do DepartmentForm
+			// Quando clicar no <Button> btSave os objetos (classes) da lista
+			notifyDataChangeListeners();
+			
 			Utils.currentStage(event).close();
 		}
 		catch (DbException e) {
@@ -75,16 +84,6 @@ public class DepartmentFormController implements Initializable{
 		}
 	}
 	
-	private Department getFormData() {
-		Department obj = new Department();
-		obj.setId(Utils.tryParseToInt(txtId.getText()));
-		obj.setName(txtName.getText());
-		
-		return obj;
-		
-	}
-
-	// Agora o <Button> btCancel fecha View do DepartmentForm
 	@FXML 
 	public void OnBtCancelAction(ActionEvent event) {
 		Utils.currentStage(event).close();
@@ -98,6 +97,14 @@ public class DepartmentFormController implements Initializable{
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
 		Constraints.setTextFieldMaxLength(txtName, 30);
+	}
+	
+	private Department getFormData() {
+		Department obj = new Department();
+		obj.setId(Utils.tryParseToInt(txtId.getText()));
+		obj.setName(txtName.getText());
+		
+		return obj;
 	}
 	
 	public void updateFormData() {
