@@ -41,14 +41,9 @@ public class DepartmentListController implements Initializable{
 	
 	private ObservableList<Department> obsList;
 	
-	// - (ActionEvent event): a partir dele ter condição de acessar o Stage de onde está esse botão
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
-		
-		// Seleciona o Stage atual, onde o botão "New" fica
 		Stage parentStage = Utils.currentStage(event);
-		
-		// Cria a janela por cima
 		createDailogForm("/gui/DepartmentForm.fxml", parentStage);
 	}
 	
@@ -79,32 +74,17 @@ public class DepartmentListController implements Initializable{
 		tableViewDepartment.setItems(obsList);
 	}
 
-	// Abrir a View DepartmentForm sobre outra
-	// - (Stage parentStage): informar qual Stage que criou essa outra janela na frente, nesse caso a janela de diálogo
-	
-	// E chamar essa função na função onBtNewAction(), para quando o botão "New" for clicado, aparecer a View DepartmentForm na frente
 	private void createDailogForm(String absoluteName, Stage parentStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
 			
-			// Para carregar uma janela modal na frente da janela existente, tem-se que instanciar outro Stage
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Department data");
-			
-			// Novo Stage, também tem que ter uma nova Scene
 			dialogStage.setScene(new Scene(pane));
-			
-			// Diz se a janela pode ou não ser redimensionada
 			dialogStage.setResizable(false);
-			
-			// Quem é o Stage pai dessa janela (a janela que fez a DepartmentForm ser aberta)
 			dialogStage.initOwner(parentStage);
-			
-			// Se a janela vai ser modal ou ter outro comportamento
-			// - Modality.WINDOW_MODAL: a janela fica travada - enquanto essa janela não ser fechada, não poderá acessar a janela anterior
 			dialogStage.initModality(Modality.WINDOW_MODAL);
-			
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
