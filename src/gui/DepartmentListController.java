@@ -45,10 +45,7 @@ public class DepartmentListController implements Initializable{
 	public void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		
-		// Por enquanto esse objeto "obj" está vazio
 		Department obj = new Department(); 
-		
-		// Isso de passar um objeto ao seu formulário é uma prática comum quando se programa no Padrão MVC
 		createDailogForm(obj, "/gui/DepartmentForm.fxml", parentStage);
 	}
 	
@@ -79,21 +76,18 @@ public class DepartmentListController implements Initializable{
 		tableViewDepartment.setItems(obsList);
 	}
 
-	// Agora o método também vai ser responsável por injetar esse Department obj no DepartmentFormController
 	private void createDailogForm(Department obj, String absoluteName, Stage parentStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
 			
-			// Referência para o Controller da View "absoluteName" passada como parâmetro
 			DepartmentFormController controller = loader.getController();
-			
-			// Injeção de dependência
-			// Agora o objeto "entity" da classe DepartmentFormController tem os dados do objeto "obj"
 			controller.setDeparment(obj);
 			
-			// Carregar os dados do objeto "obj" que estão no objeto "entity" nos <TextField> Id e Name da View DepartmentForm
-			// Mas por agora os <TextField> estão vazios pois no método onBtNewAction() o objeto "obj" está vazio
+			// Injeção de dependência
+			// Agora o objeto "service" da classe DepartmentFormController foi instanciado
+			// Assim o objeto "service" do método OnBtSaveAction da classe DepartmentFormController funcionará
+			controller.setDepartmentService(new DepartmentService());
 			controller.updateFormData();
 			
 			Stage dialogStage = new Stage();

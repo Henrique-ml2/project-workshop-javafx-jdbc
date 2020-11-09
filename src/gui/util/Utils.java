@@ -6,9 +6,19 @@ import javafx.stage.Stage;
 
 public class Utils {
 
-	// Acessar o Stage onde o Controller que recebeu o evento, de click por exemplo, está
-	// Assim sabendo desse Stage, poderá ser colocada por cima dessa View, a View <DepartmentForm>
 	public static Stage currentStage(ActionEvent event) {
 		return (Stage) ((Node) event.getSource()).getScene().getWindow();
+	}
+	
+	// Método que auxiliara a passar o String do <Textfiel> para Integer
+	public static Integer tryParseToInt(String str) {
+		
+		// try-catch: se a String "str" for um valor diferente de um valor Integer, o método retornará apenas NULL
+		try {
+			return Integer.parseInt(str);
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
 	}
 }
