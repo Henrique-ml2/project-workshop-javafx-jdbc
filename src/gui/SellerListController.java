@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -37,6 +38,16 @@ public class SellerListController implements Initializable, DataChangeListener {
 	private TableColumn<Seller, Integer> tableColumnId;
 	@FXML
 	private TableColumn<Seller, String> tableColumnName;
+	
+	// Adicionar mais 3 colunas na listinha <TableView> de Seller, ou seja, os atributos da classe Seller
+	@FXML
+	private TableColumn<Seller, String> tableColumnEmail;
+	@FXML
+	private TableColumn<Seller, Date> tableColumnBirthDate;
+	@FXML
+	private TableColumn<Seller, Double> tableColumnBaseSalary;
+	// ----------------------------------------------------------- //
+	
 	@FXML
 	private TableColumn<Seller, Seller> tableColumnEDIT;
 	@FXML
@@ -66,6 +77,18 @@ public class SellerListController implements Initializable, DataChangeListener {
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		
+		// Inicialização das novas colunas adicionadas (não é o porcesso de inserir valores nas colunas, este processo é feito no método updateTableView())
+		// - ...("email"): esses nomes devem ser iguai dos atributos da classe, e nesse caso, da classe Seller
+		tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+		tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+		tableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
+
+		// Formatação dos objetos birthDate's da coluna <TableColumn> tableColumnBirthDate da listinha <TableView> de Sellers
+		Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
+		
+		// Formatação dos objetos baseSalary's da coluna <TableColumn> tableColumnBaseSalary da listinha <TableView> de Sellers
+		Utils.formatTableColumnDouble(tableColumnBaseSalary, 2);
 		
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		
