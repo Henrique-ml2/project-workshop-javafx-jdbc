@@ -85,10 +85,7 @@ public class DepartmentListController implements Initializable, DataChangeListen
 			DepartmentFormController controller = loader.getController();
 			controller.setDeparment(obj);
 			controller.setDepartmentService(new DepartmentService());
-			
-			// Inscrever esse objeto (classe) DepartmentListController para receber o evento/executar o método onDataChanged()
 			controller.subscribeDataChangeListener(this);
-			
 			controller.updateFormData();
 			
 			Stage dialogStage = new Stage();
@@ -104,7 +101,6 @@ public class DepartmentListController implements Initializable, DataChangeListen
 		}
 	}
 
-	// Método implementado para atualizar a listinha de Departments <TableView> tableViewDepartment
 	@Override
 	public void onDataChanged() {
 		updateTableView();
