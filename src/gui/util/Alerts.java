@@ -16,10 +16,6 @@ public class Alerts {
 		alert.show();
 	}
 
-	/* Método implementado do PDF das aulas */
-	
-	// Método responsável por mostrar um Alert
-	// - Optional<ButtonType>: verificar qual botão foi clicado, no SIM / NÃO
 	public static Optional<ButtonType> showConfirmation(String title, String content) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle(title);
