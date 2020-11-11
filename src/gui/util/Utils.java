@@ -28,10 +28,7 @@ public class Utils {
 		}
 	}
 	
-	// Método que auxiliara a passar o String do <Textfiel> para Double
 	public static Double tryParseToDouble(String str) {
-		
-		// try-catch: se a String "str" for um valor diferente de um valor Double, o método retornará apenas NULL
 		try {
 			return Double.parseDouble(str);
 		} catch (NumberFormatException e) {
@@ -78,7 +75,6 @@ public class Utils {
 
 	public static void formatDatePicker(DatePicker datePicker, String format) {
 		datePicker.setConverter(new StringConverter<LocalDate>() {
-
 			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(format);
 			{
 				datePicker.setPromptText(format.toLowerCase());

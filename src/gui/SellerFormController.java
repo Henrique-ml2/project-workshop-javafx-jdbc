@@ -148,48 +148,29 @@ public class SellerFormController implements Initializable{
 		}
 		obj.setName(txtName.getText());
 		
-		// O campo <TextField> Email não pode ser vazio
-		// Então verificar se esse campo <TextField> Email não está vazio
 		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
-			
-			// Adiciona um erro, um objeto à coleção Map<> errors do objeto "exception"
 			exception.addError("email", "Field can't be empty!*");
 		}
 		obj.setEmail(txtEmail.getText());
 		
-		// O campo <DatePicker> Birth Date não pode ser vazio
-		// Então verificar se esse campo <TextField> Email não está vazio
 		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
-			
-			// Adiciona um erro, um objeto à coleção Map<> errors do objeto "exception"
 			exception.addError("birthDate", "Field can't be empty!*");
 		}
 		else {
-			
-			// Pegar o valor da data de nascimento do campo <DatePicker> Birth Date  e definir no objeto caso esse campo não estiver vazio
-			// - Instant instant: independe de horários de localidade
 			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
 			obj.setBirthDate(Date.from(instant));
 		}
 		
-		// O campo <TextField> Base Salary não pode ser vazio
-		// Então verificar se esse campo <TextField> BaseSalary não está vazio
 		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
-			
-			// Adiciona um erro, um objeto à coleção Map<> errors do objeto "exception"
 			exception.addError("baseSalary", "Field can't be empty!*");
 		}
-		
-		// - tryParseToDouble(): método que tentará converter o campo do <TextField> para Double, e se não conseguir retornará apenas NULL
 		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
-
-		// O Department selecionado na ComboBox
+		
 		obj.setDepartment(comboBoxDepartment.getValue());
 		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
-		
 		return obj;
 	}
 	
@@ -206,7 +187,6 @@ public class SellerFormController implements Initializable{
 		if (entity.getBirthDate() != null) {
 			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
 		}
-		
 		if (entity.getDepartment() == null) {
 			comboBoxDepartment.getSelectionModel().selectFirst();
 		}
@@ -227,9 +207,6 @@ public class SellerFormController implements Initializable{
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 		
-		// Troca dos if-else's por Operador ternário, verificando se há erros no Map<> errors
-		// Caso houver, escrever a mensagem de erro correspondente do campo na View SellerForm
-		// Limpar a mensagem de erro caso o usuário agora tenha escrito algo no campo 
 		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
 		labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
 		labelErrorBirthDate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
