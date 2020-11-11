@@ -65,10 +65,6 @@ public class Utils {
 		});
 	}
 
-	/* Método implementado do PDF das aulas, pois é... */
-	/* Inspirado em um tópico do StackOverflow, link no PDF das aulas */
-	
-	// Método responsável por formatar o campo <DatePicker>, nesse caso o campo <DatePicker> dpBirthDate da classe SellerFormController
 	public static void formatDatePicker(DatePicker datePicker, String format) {
 		datePicker.setConverter(new StringConverter<LocalDate>() {
 
