@@ -143,7 +143,16 @@ public class SellerDaoJDBC implements SellerDao {
 		obj.setName(rs.getString("Name"));
 		obj.setEmail(rs.getString("Email"));
 		obj.setBaseSalary(rs.getDouble("BaseSalary"));
-		obj.setBirthDate(rs.getDate("BirthDate"));
+		
+		// Troca de código, pois esse - getDate() é do java.sql.Date não daria certo com o JavaFX, e precisa-se do java.util.Date
+		//obj.setBirthDate(rs.getDate("BirthDate"));
+		
+		// Dessa forma garante o java.util.Date fazendo uma conversão
+		// - getTimestamp(): gera a data do java.sqlDate
+		// - getTime(): seleciona o valor long dessa data
+		// - new java.util.Date: instancia a data com esse número long
+		obj.setBirthDate(new java.util.Date(rs.getTimestamp("BirthDate").getTime())); 
+		
 		obj.setDepartment(dep);
 		return obj;
 	}

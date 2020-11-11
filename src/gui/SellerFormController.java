@@ -1,8 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -17,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Seller;
@@ -35,14 +39,33 @@ public class SellerFormController implements Initializable{
 	private TextField txtId;
 	@FXML
 	private TextField txtName;
+	
+	// Adiconar mais 3 campos <TextField> na View SellerForm
+	@FXML
+	private TextField txtEmail;
+	@FXML
+	private DatePicker dpBirthDate;
+	@FXML
+	private TextField txtBaseSalary;
+	
 	@FXML
 	private Label labelErrorName;
+	
+	// Adicionar mais 3 mensagens de erro <Label> na View SellerForm
+	@FXML
+	private Label labelErrorEmail;
+	@FXML
+	private Label labelErrorBirthDate;
+	@FXML
+	private Label labelErrorBaseSalary;
+	// ---------------------------------------- //
+	
 	@FXML
 	private Button btSave;
 	@FXML
 	private Button btCancel;
 	
-	public void setDeparment(Seller entity) {
+	public void setSeller(Seller entity) {
 		this.entity = entity;
 	}
 	
@@ -95,7 +118,12 @@ public class SellerFormController implements Initializable{
 	
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
-		Constraints.setTextFieldMaxLength(txtName, 30);
+		Constraints.setTextFieldMaxLength(txtName, 70);
+		
+		// Formatar os novos campos adicionados <TextField> txtEmail e txtBaseSalary e <DatePicker> dpBirthDate 
+		Constraints.setTextFieldMaxLength(txtEmail, 60);
+		Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
+		Constraints.setTextFieldDouble(txtBaseSalary);
 	}
 	
 	private Seller getFormData() {
@@ -122,8 +150,23 @@ public class SellerFormController implements Initializable{
 		if (entity == null) {
 			throw new IllegalStateException("Entity was null");
 		}
+		Locale.setDefault(Locale.US);
+		
 		txtId.setText(String.valueOf(entity.getId()));
 		txtName.setText(entity.getName());
+		txtEmail.setText(entity.getEmail());
+		txtBaseSalary.setText(String.format("%.2f", entity.getBaseSalary()));
+		
+		if (entity.getBirthDate() != null) {
+			
+			// No banco de dados a data está gravada independentemente de localidade
+			// Mas na tela irá mostrar para o usuário a data local do computador dele
+			// - entity.getBirthDate(): objeto do tipo java.util.Date
+			// - .toInstant(): converte a data para instante
+			// - ZoneId.systemDefault(): pega o fuso-horário da pessoa que tiver usando a aplicação 
+			// - LocaleDate.ofInstante(): pega tudo e converte para LocalDate
+			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
+		}
 	}
 	
 	private void setErrorMessages(Map<String, String> errors) {
