@@ -24,13 +24,6 @@ public class Utils {
 		}
 	}
 
-	/* Método implementado do PDF das aulas, pois é... */
-	/* Inspirado em um tópico do StackOverflo, link no PDF das aulas */
-
-	// Método responsável por formatar as datas em colunas
-	// E que nesse caso será usado para formatar as datas da coluna <TableColumn> tableColumnBirthDate da listinha <TableView> de Sellers da classe SellerListController
-	// - TableColumn<T, Date> tableColumn: nome da coluna <TableColumn> da listinha <TableView>
-	// - String format: formato de como serão as datas. Ex: dd/MM/yyy
 	public static <T> void formatTableColumnDate(TableColumn<T, Date> tableColumn, String format) {
 		tableColumn.setCellFactory(column -> {
 			TableCell<T, Date> cell = new TableCell<T, Date>() {
@@ -50,12 +43,6 @@ public class Utils {
 		});
 	}
 
-	/* Método implementado do PDF das aulas, pois é... */
-
-	// Método responsável por formatar valores de pontos flutuantes
-	// E que nesse caso será usado para formatar os valores de pontos flutuantes da coluna <TableColumn> tableColumnBaseSalary da listinha <TableView> de Sellers da classe SellerListController
-	// - TableColumn<T, Double> tableColumn: nome da coluna 
-	// - int decimalPlaces: quantas casas decimais esse valor terá
 	public static <T> void formatTableColumnDouble(TableColumn<T, Double> tableColumn, int decimalPlaces) {
 		tableColumn.setCellFactory(column -> {
 			TableCell<T, Double> cell = new TableCell<T, Double>() {
