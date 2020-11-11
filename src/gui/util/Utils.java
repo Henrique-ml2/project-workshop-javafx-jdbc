@@ -27,6 +27,17 @@ public class Utils {
 			return null;
 		}
 	}
+	
+	// Método que auxiliara a passar o String do <Textfiel> para Double
+	public static Double tryParseToDouble(String str) {
+		
+		// try-catch: se a String "str" for um valor diferente de um valor Double, o método retornará apenas NULL
+		try {
+			return Double.parseDouble(str);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
 
 	public static <T> void formatTableColumnDate(TableColumn<T, Date> tableColumn, String format) {
 		tableColumn.setCellFactory(column -> {

@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,7 +43,6 @@ public class SellerFormController implements Initializable{
 	
 	private SellerService service;
 	
-	// Dependência
 	private DepartmentService departmentService;
 	
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
@@ -56,11 +57,8 @@ public class SellerFormController implements Initializable{
 	private DatePicker dpBirthDate;
 	@FXML
 	private TextField txtBaseSalary;
-	
-	// Adicionar uma ComboBox para selecionar um Department an View SellerForm
 	@FXML
 	private ComboBox<Department> comboBoxDepartment;
-	
 	@FXML
 	private Label labelErrorName;
 	@FXML
@@ -74,14 +72,12 @@ public class SellerFormController implements Initializable{
 	@FXML
 	private Button btCancel;
 	
-	// Criar uma lista ObservableList para adicioná-la no <ComboBox> comboBoxDepartment
 	private ObservableList<Department> obsList;
 	
 	public void setSeller(Seller entity) {
 		this.entity = entity;
 	}
 	
-	// Agora o método faz duas injeções de dependência por inversão de controle
 	public void setServices(SellerService service, DepartmentService departmentService) {
 		this.service = service;
 		this.departmentService = departmentService;
@@ -150,8 +146,45 @@ public class SellerFormController implements Initializable{
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("name", "Field can't be empty!*");
 		}
-		
 		obj.setName(txtName.getText());
+		
+		// O campo <TextField> Email não pode ser vazio
+		// Então verificar se esse campo <TextField> Email não está vazio
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			
+			// Adiciona um erro, um objeto à coleção Map<> errors do objeto "exception"
+			exception.addError("email", "Field can't be empty!*");
+		}
+		obj.setEmail(txtEmail.getText());
+		
+		// O campo <DatePicker> Birth Date não pode ser vazio
+		// Então verificar se esse campo <TextField> Email não está vazio
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			
+			// Adiciona um erro, um objeto à coleção Map<> errors do objeto "exception"
+			exception.addError("birthDate", "Field can't be empty!*");
+		}
+		else {
+			
+			// Pegar o valor da data de nascimento do campo <DatePicker> Birth Date  e definir no objeto caso esse campo não estiver vazio
+			// - Instant instant: independe de horários de localidade
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			obj.setBirthDate(Date.from(instant));
+		}
+		
+		// O campo <TextField> Base Salary não pode ser vazio
+		// Então verificar se esse campo <TextField> BaseSalary não está vazio
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			
+			// Adiciona um erro, um objeto à coleção Map<> errors do objeto "exception"
+			exception.addError("baseSalary", "Field can't be empty!*");
+		}
+		
+		// - tryParseToDouble(): método que tentará converter o campo do <TextField> para Double, e se não conseguir retornará apenas NULL
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+
+		// O Department selecionado na ComboBox
+		obj.setDepartment(comboBoxDepartment.getValue());
 		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
@@ -174,11 +207,7 @@ public class SellerFormController implements Initializable{
 			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
 		}
 		
-		// Verifica se a entidade para preencher os campos da View SellerForm está vazio, significando que é um novo Seller
 		if (entity.getDepartment() == null) {
-			
-			// - getSelectionModel(): seleciona as opções da <ComboBox> comboBoxDepartment
-			// - selectFirst(): já preenche a <ComboBox> comboBoxDepartment com o primeiro Department da lista (já que é um novo Seller)
 			comboBoxDepartment.getSelectionModel().selectFirst();
 		}
 		else {
@@ -186,40 +215,27 @@ public class SellerFormController implements Initializable{
 		}
 	}
 	
-	// Método responsável por:
-	// 1) chamar o objeto de dependência "departmentService" selecionando todos os Departments do banco de dados
-	// 2) carregando esses Departments em uma lista
-	// 3) preenchendo a lista ObservableList "obsList" com essa lista com os Departments
-	// 4) definir essa "obsList" como a lista associada à <ComboBox> comboBoxDepartment
 	public void loadAssociatedObjects() {
-		
-		// Programação defensiva caso o programador se esqueça de fazer a injeção do DepartmentService service
-		// Faz-se essa Programação defensiva pois as Injeções de Dependência estão sendo feitas manualmente e não com um Framework e et
 		if (departmentService == null ) {
 			throw new IllegalStateException("DepartmentService was null");
 		}
-		
-		// 1) e 2)
 		List<Department> list = departmentService.findAll();
-		
-		// 3)
 		obsList = FXCollections.observableArrayList(list);
-		
-		// 4) 
 		comboBoxDepartment.setItems(obsList);
 	}
 	
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 		
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
-		}
+		// Troca dos if-else's por Operador ternário, verificando se há erros no Map<> errors
+		// Caso houver, escrever a mensagem de erro correspondente do campo na View SellerForm
+		// Limpar a mensagem de erro caso o usuário agora tenha escrito algo no campo 
+		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
+		labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
+		labelErrorBirthDate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
+		labelErrorBaseSalary.setText(fields.contains("baseSalary") ? errors.get("baseSalary") : "");
 	}
 	
-	/* Método implementado do PDF das aulas, o mesmo do capítulo de Interface Gráfica */
-
-	// Método responsável por inicializar a <ComboBox> comboBoxDepartment da View SellerForm
 	private void initializeComboBoxDepartment() {
 		 Callback<ListView<Department>, ListCell<Department>> factory = lv -> new ListCell<Department>() {
 		
@@ -229,7 +245,7 @@ public class SellerFormController implements Initializable{
 				 setText(empty ? "" : item.getName());
 			 }
 		 };
-		comboBoxDepartment.setCellFactory(factory);
-		comboBoxDepartment.setButtonCell(factory.call(null));
+		 comboBoxDepartment.setCellFactory(factory);
+		 comboBoxDepartment.setButtonCell(factory.call(null));
 		} 
 }

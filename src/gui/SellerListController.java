@@ -108,13 +108,8 @@ public class SellerListController implements Initializable, DataChangeListener {
 			
 			SellerFormController controller = loader.getController();
 			controller.setSeller(obj);
-			
-			// Agora são duas injeções de dependência
 			controller.setServices(new SellerService(), new DepartmentService());
-			
-			// Carregar a <ComboBox> comboBoxDepartment da classe SellerFormController com os Departments do banco de dados na View SellerForm
 			controller.loadAssociatedObjects();			
-			
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 			
@@ -127,10 +122,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
-			
-			// Ter mais informações caso haja algum erro quando for abrir a View SellerForm
 			e.printStackTrace();
-			
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
